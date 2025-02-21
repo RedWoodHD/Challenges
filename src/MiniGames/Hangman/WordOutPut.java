@@ -34,14 +34,22 @@ public class WordOutPut
         System.out.println();
     }
 
-    static boolean printWordBox(String word, char[] userGuess, char[] rightGuesses)
+    static boolean printWordBox(String word, char[] userGuess, char[] rightGuesses,Player playerTwo)
     {
         char[] letters = word.toCharArray();
         int correctLetters = 0;
+        if (userGuess == null){
+            userGuess = new char[1];
+            userGuess[0] = '?';
+        }
         for (int i = 0; i < word.length(); i++)
         {
-            if (userGuess[i] == Character.toUpperCase(letters[i]) || userGuess[i] == Character.toLowerCase(letters[i])){
-                correctLetters++;
+            if (userGuess.length > i)
+            {
+                if (userGuess[i] == Character.toUpperCase(letters[i]) || userGuess[i] == Character.toLowerCase(letters[i]))
+                {
+                    correctLetters++;
+                }
             }
         }
         if (correctLetters == word.length()){
@@ -49,7 +57,7 @@ public class WordOutPut
             {
                 if (userGuess[i] == Character.toLowerCase(letters[i]) || userGuess[i] == Character.toUpperCase(letters[i]))
                 {
-                    rightGuesses[i] = userGuess[i];
+                        rightGuesses[i] = userGuess[i];
                 }
             }
         }
@@ -57,7 +65,7 @@ public class WordOutPut
         {
             if (userGuess[0] == Character.toLowerCase(letters[i]) || userGuess[0] == Character.toUpperCase(letters[i]))
             {
-                rightGuesses[i] = userGuess[0];
+                    rightGuesses[i] = userGuess[0];
             }
         }
 
@@ -100,6 +108,23 @@ public class WordOutPut
             System.out.print("───");
         }
         System.out.println();
+        System.out.print("Falsche Versuche: ");
+        for (char wrongLetter : playerTwo.getWrongLetters())
+        {
+
+            System.out.print(wrongLetter+" ");
+        }
+        System.out.println();
+        System.out.print("Falsche Wörter: ");
+        for (String wrongWord : playerTwo.getWrongWords())
+        {
+            if (wrongWord != null)
+            {
+                System.out.print(wrongWord + " ");
+            }
+        }
+        System.out.println();
+
         if (String.valueOf(letters).equalsIgnoreCase(String.valueOf(rightGuesses)))
         {
             return true;
