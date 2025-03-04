@@ -47,7 +47,7 @@ public class Checker
                 }
             }
         }
-        // Check for Diagonal (left-top to right-bottom)
+        // Check for Diagonal (left-top to right-bottom) eh
         for (int i = 0; i < fieldPosition.length - 3; i++) {
             for (int j = 0; j < 7 - 3; j++) {
                 counter = 0;
