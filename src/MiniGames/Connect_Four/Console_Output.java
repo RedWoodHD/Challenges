@@ -1,7 +1,5 @@
 package MiniGames.Connect_Four;
 
-import java.util.Scanner;
-
 public class Console_Output
 {
     public static void printMap(String[][] fieldPosition){
