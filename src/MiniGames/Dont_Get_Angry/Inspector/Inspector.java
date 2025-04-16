@@ -1,6 +1,7 @@
 package MiniGames.Dont_Get_Angry.Inspector;
 
 import MiniGames.Dont_Get_Angry.Board.Field;
+import MiniGames.Dont_Get_Angry.Board.Figure;
 import MiniGames.Dont_Get_Angry.Player;
 
 import java.util.regex.Pattern;
@@ -72,7 +73,21 @@ public class Inspector
         return false;
     }
 
-    public static boolean spawnCheck(Field[] allFields, Player player)
+    public static boolean figureInSpawn(Field[] allFields,Figure figure)
+    {
+        for (int i = 0; i < 16; i++)
+        {
+            if (allFields[i].getFigure() != null)
+            {
+                if (allFields[i].getFigure().equals(figure)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean allFiguresInSpawn(Field[] allFields, Player player)
     {
         switch (player.getPlayerNumber())
         {

@@ -15,10 +15,10 @@ public class Game
 //        Initialize Board
         Field[] fieldArray = FieldFactory.createAllFields();
 //        Create all Figures
-        Figure[] figuresPOne = createFigureArray(1, "▲");
-        Figure[] figuresPTwo = createFigureArray(2, "■");
-        Figure[] figuresPThree = createFigureArray(3, "●");
-        Figure[] figuresPFour = createFigureArray(4, "♦");
+        Figure[] figuresPOne = createFigureArray(1, "▲", "\033[31m");
+        Figure[] figuresPTwo = createFigureArray(2, "■", "\033[36m");
+        Figure[] figuresPThree = createFigureArray(3, "●", "\033[32m");
+        Figure[] figuresPFour = createFigureArray(4, "♦", "\033[33m");
 //        Set Spawn Figures
         setPositions(fieldArray, figuresPOne, 0, 1, 2, 3);
         setPositions(fieldArray, figuresPTwo, 4, 5, 6, 7);
@@ -83,12 +83,13 @@ public class Game
         fields[i3].setFigure(figures[3]);
     }
 
-    private static Figure[] createFigureArray(int playerNumber, String operator)
+    private static Figure[] createFigureArray(int playerNumber, String operator, String color)
     {
+        String reset = "\033[0m";
         Figure[] figures = new Figure[4];
         for (int i = 0; i < 4; i++)
         {
-            figures[i] = new Figure(i + 1 + operator, playerNumber);
+            figures[i] = new Figure(color + (i + 1) + operator + reset, playerNumber);
         }
         return figures;
     }
@@ -99,51 +100,176 @@ public class Game
         {
             System.out.println(player.getName() + " Würfeln sie mit enter: ");
             int number = Dice.roll();
-            System.out.println(number);
-            if (!Inspector.spawn(fieldArray, player))
+            System.out.println("Sie haben: " + number + " gewürfelt!");
+            if (number == 6)
             {
+                if (Inspector.allFiguresInSpawn(fieldArray, player))
+                {
+                    moveFigureOutOfSpawn(fieldArray, player, Input.getInt("Welche Figur möchten Sie aus dem Spawn bewegen?"));
+                }
+                else
+                {
+                    int chosenFigure = Input.getInt("Welche Figur möchten Sie bewegen?");
+                    if (player.getFigureArray()[chosenFigure - 1].isInsideSpawn())
+                    {
+                        moveFigureOutOfSpawn(fieldArray, player, chosenFigure);
+                    }
+                    else
+                    {
+                        moveFigure(fieldArray, player, chosenFigure, number);
+                    }
+                }
                 break;
             }
-            if (number == 6)
+            if (!Inspector.allFiguresInSpawn(fieldArray, player))
             {
                 moveFigure(fieldArray, player, Input.getInt("Welche Figur möchten Sie bewegen?"), number);
                 break;
             }
         }
-
-
     }
 
     private static void moveFigure(Field[] fieldArray, Player player, int chosenFigure, int diceNumber)
     {
         Figure figure = player.getFigureArray()[chosenFigure - 1];
         int currentPosition = figure.getPosition();
-        if (Inspector.spawnCheck(fieldArray,player))
+        if (figure.isInsideSpawn())
         {
-            moveFigureOutOfSpawn(fieldArray,player,chosenFigure);
-            return;
+            if (diceNumber == 6)
+            {
+                moveFigureOutOfSpawn(fieldArray, player, chosenFigure);
+            }
+            System.out.println("Sie können diese Figur nicht bewegen!");
+            moveFigure(fieldArray, player, Input.getInt("Welche Figur möchten Sie bewegen?"), diceNumber);
         }
-        fieldArray[currentPosition].setFigure(null);
-        fieldArray[currentPosition + diceNumber].setFigure(figure);
+        else
+        {
+            if (fieldArray[currentPosition + diceNumber].getFigure() == null)
+            {
+                fieldArray[currentPosition].setFigure(null);
+                switch (player.getPlayerNumber())
+                {
+                    case 1:
+                        if (currentPosition + diceNumber - 40 > 59)
+                        {
+                            System.out.println("Diese Bewegung ist unzulässig.");
+                            break;
+                        }
+                        figure.setPosition(currentPosition + diceNumber);
+                        fieldArray[currentPosition + diceNumber].setFigure(figure);
+                        break;
+                    case 2:
+                        if (currentPosition > 20 && currentPosition < 26)
+                        {
+                            if (currentPosition + diceNumber > 26){
+                                figure.setPosition(currentPosition + diceNumber + 34);
+                                fieldArray[currentPosition + diceNumber + 34].setFigure(figure);
+                            }
+                        }
+                        if (currentPosition + diceNumber > 55)
+                        {
+                            figure.setPosition(currentPosition + diceNumber - 40);
+                            fieldArray[currentPosition + diceNumber - 40].setFigure(figure);
+                        }
+                        else
+                        {
+                            figure.setPosition(currentPosition + diceNumber);
+                            fieldArray[currentPosition + diceNumber].setFigure(figure);
+                        }
+                        break;
+                    case 3:
+                        if (currentPosition + diceNumber > 45)
+                        {
+                            if (currentPosition + diceNumber + 22 > 71)
+                            {
+                                System.out.println("Diese Bewegung ist unzulässig.");
+                                break;
+                            }
+                            figure.setPosition(currentPosition + diceNumber + 22);
+                            fieldArray[currentPosition + diceNumber + 22].setFigure(figure);
+                        }
+                        else
+                        {
+                            figure.setPosition(currentPosition + diceNumber);
+                            fieldArray[currentPosition + diceNumber].setFigure(figure);
+                        }
+                        break;
+                    case 4:
+                        if (currentPosition + diceNumber > 35)
+                        {
+                            if (currentPosition + diceNumber + 28 > 67)
+                            {
+                                System.out.println("Diese Bewegung ist unzulässig.");
+                                break;
+                            }
+                            figure.setPosition(currentPosition + diceNumber + 28);
+                            fieldArray[currentPosition + diceNumber + 28].setFigure(figure);
+                        }
+                        else
+                        {
+                            figure.setPosition(currentPosition + diceNumber);
+                            fieldArray[currentPosition + diceNumber].setFigure(figure);
+                        }
+                        break;
+                }
+            }
+            else
+            {
+                System.out.println("Dies ist leider nicht möglich");
+                System.out.println("Skip(fürs erste)");
+            }
+        }
     }
 
     private static void moveFigureOutOfSpawn(Field[] fieldArray, Player player, int figureNumber)
     {
+        switch (player.getPlayerNumber())
+        {
+            case 1:
+                if (fieldArray[16].getFigure() != null)
+                {
+                    System.out.println("Spawn ist belegt");
+                    break;
+                }
+            case 2:
+                if (fieldArray[26].getFigure() != null)
+                {
+                    System.out.println("Spawn ist belegt");
+                    break;
+                }
+            case 3:
+                if (fieldArray[46].getFigure() != null)
+                {
+                    System.out.println("Spawn ist belegt");
+                    break;
+                }
+            case 4:
+                if (fieldArray[36].getFigure() != null)
+                {
+                    System.out.println("Spawn ist belegt");
+                    break;
+                }
+        }
         Figure figure = player.getFigureArray()[figureNumber - 1];
+        figure.setInsideSpawn(false);
         int currentPosition = figure.getPosition();
         fieldArray[currentPosition].setFigure(null);
         switch (player.getPlayerNumber())
         {
             case 1:
+                figure.setPosition(16);
                 fieldArray[16].setFigure(figure);
                 break;
             case 2:
+                figure.setPosition(26);
                 fieldArray[26].setFigure(figure);
                 break;
             case 3:
+                figure.setPosition(46);
                 fieldArray[46].setFigure(figure);
                 break;
             case 4:
+                figure.setPosition(36);
                 fieldArray[36].setFigure(figure);
                 break;
         }

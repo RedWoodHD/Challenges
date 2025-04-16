@@ -5,6 +5,7 @@ public class Figure
     String operator;
     int number;
     int position;
+    boolean insideSpawn = true;
 
     public Figure(String operator, int number)
     {
@@ -44,4 +45,17 @@ public class Figure
         this.position = position;
         return this;
     }
+
+    public boolean isInsideSpawn()
+    {
+        return insideSpawn;
+    }
+
+    public Figure setInsideSpawn(boolean insideSpawn)
+    {
+        this.insideSpawn = insideSpawn;
+        return this;
+    }
+
+
 }
