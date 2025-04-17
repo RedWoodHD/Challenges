@@ -6,11 +6,23 @@ public class Figure
     int number;
     int position;
     boolean insideSpawn = true;
+    boolean insideGoal = false;
 
     public Figure(String operator, int number)
     {
         this.operator = operator;
         this.number = number;
+    }
+
+    public boolean isInsideGoal()
+    {
+        return insideGoal;
+    }
+
+    public Figure setInsideGoal(boolean insideGoal)
+    {
+        this.insideGoal = insideGoal;
+        return this;
     }
 
     public String getOperator()
