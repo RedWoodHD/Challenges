@@ -7,13 +7,28 @@ public class Player
     String name;
     Figure[] figureArray;
     int playerNumber;
+    int spawnField;
+    int[] path;
 
-    public Player(String name, Figure[] figureArray, int playerNumber)
+    public Player(String name, Figure[] figureArray, int playerNumber, int[] path)
     {
         this.name = name;
         this.figureArray = figureArray;
         this.playerNumber = playerNumber;
+        this.path = path;
     }
+
+    public int getSpawnField()
+    {
+        return spawnField;
+    }
+
+    public Player setSpawnField(int spawnField)
+    {
+        this.spawnField = spawnField;
+        return this;
+    }
+
     public String getName()
     {
         return name;

@@ -24,14 +24,27 @@ public class Game
         setPositions(fieldArray, figuresPTwo, 4, 5, 6, 7);
         setPositions(fieldArray, figuresPThree, 8, 9, 10, 11);
         setPositions(fieldArray, figuresPFour, 12, 13, 14, 15);
+//        Set player paths
+        int[] p1Path = new int[]{0, 1, 2, 3, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
+        };
+        int[] p2Path = new int[]{4, 5, 6, 7, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 60, 61 ,62 ,63
+        };
+        int[] p3Path = new int[]{8, 9, 10, 11, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 68, 69, 70, 71
+        };
+        int[] p4Path = new int[]{12, 13, 14, 15, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35
+        };
 //        Asking for Player Number
         int playerAmount = Input.getInt("Wie viele Spieler sind da: ");
 //        Create first two players
-        Player playerOne = new Player(Input.getString("Spieler eins geben Sie Ihren Namen ein: "), figuresPTwo, 2);
-        Player playerTwo = new Player("", figuresPTwo, 2);
+        Player playerOne = new Player(Input.getString("Spieler eins geben Sie Ihren Namen ein: "), figuresPTwo, 2,p1Path);
+        Player playerTwo = new Player("", figuresPTwo, 2,p2Path);
 //        Create optional players
-        Player playerThree = new Player("", figuresPThree, 3);
-        Player playerFour = new Player("", figuresPFour, 4);
+        Player playerThree = new Player("", figuresPThree, 3,p3Path);
+        Player playerFour = new Player("", figuresPFour, 4,p4Path);
+        playerOne.setSpawnField(16);
+        playerTwo.setSpawnField(26);
+        playerThree.setSpawnField(46);
+        playerFour.setSpawnField(36);
         if (playerAmount >= 2)
         {
             playerTwo.setName(Input.getString("Spieler zwei geben Sie Ihren Namen ein: "));
@@ -70,6 +83,17 @@ public class Game
         }
     }
 
+    private static void newMovementTech(Field[] fieldArray, Player player){
+        System.out.println(player.getName() + " Würfeln sie mit enter: ");
+        int diceNumber = Dice.roll();
+        System.out.println(player.getName() + " hat: " + diceNumber + " gewürfelt!");
+        Figure figureBlockingMe;
+        int chosenFigure = Input.getInt("Welche Figur möchten Sie bewegen?: ");
+        int currentPosition = player.getFigureArray()[chosenFigure - 1].getPosition();
+//        Arbeite mit dem Array als Path index addieren zum moven und dann prüfen ob diese Zahl besetzt ist und von wem,
+//        um den später zurück zu schicken
+    }
+
     private static void setPositions(Field[] fields, Figure[] figures, int i, int i1, int i2, int i3)
     {
         figures[0].setPosition(i);
@@ -103,14 +127,14 @@ public class Game
             System.out.println(player.getName() + " hat: " + number + " gewürfelt!");
             if (number == 6)
             {
-                if (Inspector.allFiguresInSpawn(fieldArray, player))
+                if (Inspector.allFiguresInSpawn(fieldArray, player) && fieldArray[player.getSpawnField()].getFigure() == null)
                 {
                     moveFigureOutOfSpawn(fieldArray, player, Input.getInt("Welche Figur möchten Sie aus dem Spawn bewegen?"));
                 }
                 else
                 {
                     int chosenFigure = Input.getInt("Welche Figur möchten Sie bewegen?");
-                    if (player.getFigureArray()[chosenFigure - 1].isInsideSpawn())
+                    if (player.getFigureArray()[chosenFigure - 1].isInsideHome() && fieldArray[player.getSpawnField()].getFigure() == null)
                     {
                         moveFigureOutOfSpawn(fieldArray, player, chosenFigure);
                     }
@@ -134,7 +158,7 @@ public class Game
     {
         Figure figure = player.getFigureArray()[chosenFigure - 1];
         int currentPosition = figure.getPosition();
-        if (figure.isInsideSpawn())
+        if (figure.isInsideHome() && fieldArray[player.getSpawnField()].getFigure() == null)
         {
             if (diceNumber == 6)
             {
@@ -268,7 +292,7 @@ public class Game
 
     private static void moveFigureOutOfSpawn(Field[] fieldArray, Player player, int figureNumber)
     {
-        if (player.getFigureArray()[figureNumber-1].isInsideSpawn())
+        if (player.getFigureArray()[figureNumber - 1].isInsideHome())
         {
             switch (player.getPlayerNumber())
             {
@@ -277,32 +301,30 @@ public class Game
                     {
                         System.out.println("Spawn ist belegt");
                         moveFigureOutOfSpawn(fieldArray, player, Input.getInt("Wählen Sie eine andere Figur!"));
-                        break;
+                        return;
                     }
                 case 2:
                     if (fieldArray[26].getFigure() != null)
                     {
                         System.out.println("Spawn ist belegt");
-                        moveFigureOutOfSpawn(fieldArray, player, Input.getInt("Wählen Sie eine andere Figur!"));
-                        break;
+                        return;
                     }
                 case 3:
                     if (fieldArray[46].getFigure() != null)
                     {
                         System.out.println("Spawn ist belegt");
-                        moveFigureOutOfSpawn(fieldArray, player, Input.getInt("Wählen Sie eine andere Figur!"));
-                        break;
+                        return;
+
                     }
                 case 4:
                     if (fieldArray[36].getFigure() != null)
                     {
                         System.out.println("Spawn ist belegt");
-                        moveFigureOutOfSpawn(fieldArray, player, Input.getInt("Wählen Sie eine andere Figur!"));
-                        break;
+                        return;
                     }
             }
             Figure figure = player.getFigureArray()[figureNumber - 1];
-            figure.setInsideSpawn(false);
+            figure.setInsideHome(false);
             int currentPosition = figure.getPosition();
             fieldArray[currentPosition].setFigure(null);
             switch (player.getPlayerNumber())
