@@ -8,6 +8,8 @@ import MiniGames.Dont_Get_Angry.Factory.FieldFactory;
 import MiniGames.Dont_Get_Angry.Inspector.Inspector;
 import MiniGames.Dont_Get_Angry.Player;
 
+import java.util.ConcurrentModificationException;
+
 public class Game
 {
     public static void start()
@@ -27,20 +29,21 @@ public class Game
 //        Set player paths
         int[] p1Path = new int[]{0, 1, 2, 3, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59
         };
-        int[] p2Path = new int[]{4, 5, 6, 7, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 60, 61 ,62 ,63
+        int[] p2Path = new int[]{4, 5, 6, 7, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 60, 61, 62, 63
         };
         int[] p3Path = new int[]{8, 9, 10, 11, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 68, 69, 70, 71
         };
-        int[] p4Path = new int[]{12, 13, 14, 15, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35
+        int[] p4Path = new int[]{12, 13, 14, 15, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 64, 65, 66, 67
         };
 //        Asking for Player Number
         int playerAmount = Input.getInt("Wie viele Spieler sind da: ");
 //        Create first two players
-        Player playerOne = new Player(Input.getString("Spieler eins geben Sie Ihren Namen ein: "), figuresPTwo, 2,p1Path);
-        Player playerTwo = new Player("", figuresPTwo, 2,p2Path);
+        Player playerOne = new Player(Input.getString("Spieler eins geben Sie Ihren Namen ein: "), figuresPOne, 1, p1Path);
+        Player playerTwo = new Player("", figuresPTwo, 2, p2Path);
 //        Create optional players
-        Player playerThree = new Player("", figuresPThree, 3,p3Path);
-        Player playerFour = new Player("", figuresPFour, 4,p4Path);
+        Player playerThree = new Player("", figuresPThree, 3, p3Path);
+        Player playerFour = new Player("", figuresPFour, 4, p4Path);
+        Player[] allPlayers = new Player[]{playerOne, playerTwo, playerThree, playerFour};
         playerOne.setSpawnField(16);
         playerTwo.setSpawnField(26);
         playerThree.setSpawnField(46);
@@ -62,44 +65,180 @@ public class Game
         while (true)
         {
 //        Spiele ein Runde
-            playOneRound(fieldArray, playerOne);
+            newMovementTech(fieldArray, playerOne, allPlayers);
             Output.map(fieldArray);
             if (playerAmount >= 2)
             {
-                playOneRound(fieldArray, playerTwo);
+                newMovementTech(fieldArray, playerTwo, allPlayers);
                 Output.map(fieldArray);
             }
             if (playerAmount >= 3)
             {
-                playOneRound(fieldArray, playerThree);
+                newMovementTech(fieldArray, playerThree, allPlayers);
                 Output.map(fieldArray);
             }
             if (playerAmount == 4)
             {
-                playOneRound(fieldArray, playerFour);
+                newMovementTech(fieldArray, playerFour, allPlayers);
                 Output.map(fieldArray);
             }
 
         }
     }
 
-    private static void newMovementTech(Field[] fieldArray, Player player){
+    private static void newMovementTech(Field[] fieldArray, Player player, Player[] allPlayers)
+    {
+//        Die Zahl würfeln
         System.out.println(player.getName() + " Würfeln sie mit enter: ");
-        int diceNumber = Dice.roll();
+        int diceNumber = Dice.testRoll();
         System.out.println(player.getName() + " hat: " + diceNumber + " gewürfelt!");
-        Figure figureBlockingMe;
-        int chosenFigure = Input.getInt("Welche Figur möchten Sie bewegen?: ");
-        int currentPosition = player.getFigureArray()[chosenFigure - 1].getPosition();
-//        Arbeite mit dem Array als Path index addieren zum moven und dann prüfen ob diese Zahl besetzt ist und von wem,
-//        um den später zurück zu schicken
+
+//       Die Figur zum Bewegen auswählen
+        boolean blockedByMate = true;
+        while (blockedByMate)
+        {
+            int chosenFigure = Input.getInt("Welche Figur möchten Sie bewegen?: ") - 1;
+            Figure figure = player.getFigureArray()[chosenFigure];
+            int currentLocation = figure.getPosition();
+            int[] path = player.getPath();
+            Figure figureAtNewLocation = checkForFigure(fieldArray, diceNumber, figure, player);
+            if (diceNumber == 6 && fieldArray[path[4]].getFigure() == null && figure.isInsideHome())
+            {
+                moveFigureToThisIndex(fieldArray, figure, 4, path);
+                figure.setInsideHome(false);
+                break;
+            }
+//        Kontrollieren, ob das Feld frei ist
+            else if (figureAtNewLocation != null && !figure.isInsideHome()) // Gehe ins if, wenn das Feld blockiert ist.
+            {
+                int whatPlayerIsThat = figureAtNewLocation.getNumber();
+                if (whatPlayerIsThat != figure.getNumber())
+                {
+                    moveFigureBackInHouse(fieldArray, figureAtNewLocation);
+                    blockedByMate = false;
+                }
+                else
+                {
+                    System.out.println("That is your mate bruh");
+                    break;
+                }
+            }
+//            Bewege die ausgewählte Figure in das Feld
+            if (!figure.isInsideHome())
+            {
+                int pathIndexOfNewPosition = getIndexFromPath(path, currentLocation) + diceNumber; // Das ist der Index vom Weg an der neuen Stelle zu der sich die Figur bewegt
+                moveFigureToThisIndex(fieldArray, figure, pathIndexOfNewPosition, path);
+                break;
+            }
+            if (figure.isInsideHome())
+            {
+                System.out.println("Skip");
+                blockedByMate = false;
+            }
+        }
+        int winner = didSomeoneWin(allPlayers);
+        if (winner != -1)
+        {
+            Output.map(fieldArray);
+            System.out.println("Spieler: " + winner +" "+ allPlayers[winner-1].getName()+ " hat gewonnen!!!!");
+            throw new ConcurrentModificationException();
+        }
+
+//        Arbeite mit dem Array als Path index addieren zum moven und dann prüfen, ob diese Zahl besetzt ist und von wem,
+//        um den später zurückzuschicken
+    }
+
+    private static int didSomeoneWin(Player[] allPlayers)
+    {
+
+        for (int i = 0; i < 4; i++)
+        {
+            int counter = 0;
+            for (int j = 0; j < 4; j++)
+            {
+                if (allPlayers[i].getFigureArray()[j].isInsideGoal())
+                {
+                    counter++;
+                }
+                if (counter == 4)
+                {
+                    return i + 1; // Wer gewonnen hat (Spieler Nummer)
+                }
+            }
+        }
+        return -1; // Wenn niemand gewonnen hat
+    }
+
+    private static void moveFigureToThisIndex(Field[] fieldArray, Figure figure, int index, int[] path)
+    {
+        if (index > 47)
+        {
+            System.out.println("Index out of Bounds verhindert!");
+            return;
+        }
+        int currentPosition = figure.getPosition();
+        fieldArray[currentPosition].setFigure(null);
+        fieldArray[path[index]].setFigure(figure);
+        figure.setPosition(path[index]);
+        if (index > 43)
+        {
+            figure.setInsideGoal(true);
+        }
+    }
+
+    private static void moveFigureBackInHouse(Field[] fieldArray, Figure figure)
+    {
+        int currentPosition = figure.getPosition();
+        fieldArray[currentPosition].setFigure(null);
+        fieldArray[figure.getMyHousePosition()].setFigure(figure);
+        figure.setPosition(figure.getMyHousePosition());
+        figure.setInsideHome(true);
+    }
+
+    private static Figure checkForFigure(Field[] fieldArray, int diceNumber, Figure figure, Player player)
+    {
+        int[] path = player.getPath();
+        int indexLocation = getIndexFromPath(path, figure.getPosition());
+        if (indexLocation + diceNumber > 47)
+        {
+            System.out.println("Nächste Figur ist out of bounce!");
+            return null ;
+        }
+        Figure figureAtNewLocation = fieldArray[path[indexLocation + diceNumber]].getFigure();
+        if (figureAtNewLocation == null)
+        {
+            return null;
+        }
+        else
+        {
+            return figureAtNewLocation;
+        }
+    }
+
+    private static int getIndexFromPath(int[] path, int currentPathLocation)
+    {
+        int index = -1;
+        for (int i = 0; i < path.length; i++)
+        {
+            if (path[i] == currentPathLocation)
+            {
+                index = i;
+                break;
+            }
+        }
+        return index;
     }
 
     private static void setPositions(Field[] fields, Figure[] figures, int i, int i1, int i2, int i3)
     {
         figures[0].setPosition(i);
+        figures[0].setMyHousePosition(i);
         figures[1].setPosition(i1);
+        figures[1].setMyHousePosition(i1);
         figures[2].setPosition(i2);
+        figures[2].setMyHousePosition(i2);
         figures[3].setPosition(i3);
+        figures[3].setMyHousePosition(i3);
 
         fields[i].setFigure(figures[0]);
         fields[i1].setFigure(figures[1]);

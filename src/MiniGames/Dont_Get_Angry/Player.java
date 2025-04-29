@@ -18,6 +18,17 @@ public class Player
         this.path = path;
     }
 
+    public int[] getPath()
+    {
+        return path;
+    }
+
+    public Player setPath(int[] path)
+    {
+        this.path = path;
+        return this;
+    }
+
     public int getSpawnField()
     {
         return spawnField;

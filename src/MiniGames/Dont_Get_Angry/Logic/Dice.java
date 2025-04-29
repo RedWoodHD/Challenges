@@ -14,4 +14,18 @@ public class Dice
         result = rand.nextInt(6)+1;
         return result;
     }
+    public static int testRoll()
+    {
+        Input.getString("");
+        int result = 0;
+        Random rand = new Random();
+        result = rand.nextInt(6)+1;
+        if (rand.nextInt(2)+1 == 1)
+        {
+            System.out.println("New 6");
+            return 6;
+        }
+        return result;
+    }
+
 }

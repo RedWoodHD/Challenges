@@ -5,6 +5,7 @@ public class Figure
     String operator;
     int number;
     int position;
+    int myHousePosition;
     boolean insideHome = true;
     boolean insideGoal = false;
 
@@ -12,6 +13,17 @@ public class Figure
     {
         this.operator = operator;
         this.number = number;
+    }
+
+    public int getMyHousePosition()
+    {
+        return myHousePosition;
+    }
+
+    public Figure setMyHousePosition(int myHousePosition)
+    {
+        this.myHousePosition = myHousePosition;
+        return this;
     }
 
     public boolean isInsideGoal()
