@@ -23,12 +23,6 @@ public class Player
         return path;
     }
 
-    public Player setPath(int[] path)
-    {
-        this.path = path;
-        return this;
-    }
-
     public int getSpawnField()
     {
         return spawnField;
@@ -53,20 +47,9 @@ public class Player
     {
         return playerNumber;
     }
-    public Player setPlayerNumber(int playerNumber)
-    {
-        this.playerNumber = playerNumber;
-        return this;
-    }
 
     public Figure[] getFigureArray()
     {
         return figureArray;
-    }
-
-    public Player setFigureArray(Figure[] figureArray)
-    {
-        this.figureArray = figureArray;
-        return this;
     }
 }
