@@ -5,7 +5,6 @@ import MiniGames.Dont_Get_Angry.Board.Figure;
 import MiniGames.Dont_Get_Angry.Console.Input;
 import MiniGames.Dont_Get_Angry.Console.Output;
 import MiniGames.Dont_Get_Angry.Factory.FieldFactory;
-import MiniGames.Dont_Get_Angry.Inspector.Inspector;
 import MiniGames.Dont_Get_Angry.Player;
 
 import java.util.ConcurrentModificationException;
@@ -38,7 +37,7 @@ public class Game
 //        Asking for Player Number
         int playerAmount = Input.getInt("Wie viele Spieler sind da: ");
 //        Create first two players
-        Player playerOne = new Player(Input.getString("Spieler eins geben Sie Ihren Namen ein: "), figuresPOne, 1, p1Path);
+        Player playerOne = new Player(Input.getString("\033[31m"+"Spieler eins geben Sie Ihren Namen ein: "), figuresPOne, 1, p1Path);
         Player playerTwo = new Player("", figuresPTwo, 2, p2Path);
 //        Create optional players
         Player playerThree = new Player("", figuresPThree, 3, p3Path);
@@ -50,16 +49,16 @@ public class Game
         playerFour.setSpawnField(36);
         if (playerAmount >= 2)
         {
-            playerTwo.setName(Input.getString("Spieler zwei geben Sie Ihren Namen ein: "));
+            playerTwo.setName(Input.getString("\033[36m"+"Spieler zwei geben Sie Ihren Namen ein: "));
 
         }
         if (playerAmount >= 3)
         {
-            playerThree.setName(Input.getString("Spieler drei geben Sie Ihren Namen ein: "));
+            playerThree.setName(Input.getString("\033[32m"+"Spieler drei geben Sie Ihren Namen ein: "));
         }
         if (playerAmount == 4)
         {
-            playerFour.setName(Input.getString("Spieler vier geben Sie Ihren Namen ein: "));
+            playerFour.setName(Input.getString("\033[33m"+"Spieler vier geben Sie Ihren Namen ein: "+"\033[0m"));
         }
         Output.map(fieldArray);
         while (true)
@@ -90,9 +89,23 @@ public class Game
     {
 //        Die Zahl würfeln
         System.out.println(player.getName() + " Würfeln sie mit enter: ");
-        int diceNumber = Dice.testRoll();
+        int diceNumber = Dice.roll();
         System.out.println(player.getName() + " hat: " + diceNumber + " gewürfelt!");
-
+        if (isEveryFigureInsideHouse(player) && diceNumber != 6)
+        {
+            System.out.println(player.getName() + " Würfeln sie mit enter: ");
+            diceNumber = Dice.roll();
+            System.out.println(player.getName() + " hat: " + diceNumber + " gewürfelt!");
+            if (diceNumber != 6){
+                System.out.println(player.getName() + " Würfeln sie mit enter: ");
+                diceNumber = Dice.roll();
+                System.out.println(player.getName() + " hat: " + diceNumber + " gewürfelt!");
+            }
+            if (diceNumber != 6)
+            {
+                return;
+            }
+        }
 //       Die Figur zum Bewegen auswählen
         boolean blockedByMate = true;
         while (blockedByMate)
@@ -101,9 +114,22 @@ public class Game
             Figure figure = player.getFigureArray()[chosenFigure];
             int currentLocation = figure.getPosition();
             int[] path = player.getPath();
-            Figure figureAtNewLocation = checkForFigure(fieldArray, diceNumber, figure, player);
-            if (diceNumber == 6 && fieldArray[path[4]].getFigure() == null && figure.isInsideHome())
+            Figure figureAtNewLocation = checkForNextFigure(fieldArray, diceNumber, figure, player);
+            if (diceNumber == 6 && figure.isInsideHome())
             {
+                Figure figureAtMySpawnLocation = fieldArray[path[4]].getFigure();
+                if (figureAtMySpawnLocation != null)
+                {
+                    if (figureAtMySpawnLocation.getNumber() != figure.getNumber())
+                    {
+                        moveFigureBackInHouse(fieldArray, fieldArray[path[4]].getFigure());
+                    }
+                    else
+                    {
+                        System.out.println("Blocked by your mate!");
+                        break;
+                    }
+                }
                 moveFigureToThisIndex(fieldArray, figure, 4, path);
                 figure.setInsideHome(false);
                 break;
@@ -140,7 +166,18 @@ public class Game
         if (winner != -1)
         {
             Output.map(fieldArray);
-            System.out.println("Spieler: " + winner + " " + allPlayers[winner - 1].getName() + " hat gewonnen!!!!");
+            System.out.println("\n" +
+                    " .---.  .---.         .--.      .--..-./`) ,---.   .--.,---.   .--.    .-''-.  .-------.             .---.  .---.  \n" +
+                    " \\   /  \\   /         |  |_     |  |\\ .-.')|    \\  |  ||    \\  |  |  .'_ _   \\ |  _ _   \\            \\   /  \\   /  \n" +
+                    " |   |  |   |         | _( )_   |  |/ `-' \\|  ,  \\ |  ||  ,  \\ |  | / ( ` )   '| ( ' )  |            |   |  |   |  \n" +
+                    "  \\ /    \\ /          |(_ o _)  |  | `-'`\"`|  |\\_ \\|  ||  |\\_ \\|  |. (_ o _)  ||(_ o _) /             \\ /    \\ /   \n" +
+                    "   v      v           | (_,_) \\ |  | .---. |  _( )_\\  ||  _( )_\\  ||  (_,_)___|| (_,_).' __            v      v    \n" +
+                    "  _ _    _ _          |  |/    \\|  | |   | | (_ o _)  || (_ o _)  |'  \\   .---.|  |\\ \\  |  |          _ _    _ _   \n" +
+                    " (_I_)  (_I_)         |  '  /\\  `  | |   | |  (_,_)\\  ||  (_,_)\\  | \\  `-'    /|  | \\ `'   /         (_I_)  (_I_)  \n" +
+                    "(_(=)_)(_(=)_)        |    /  \\    | |   | |  |    |  ||  |    |  |  \\       / |  |  \\    /         (_(=)_)(_(=)_) \n" +
+                    " (_I_)  (_I_)         `---'    `---` '---' '--'    '--''--'    '--'   `'-..-'  ''-'   `'-'           (_I_)  (_I_)  \n" +
+                    "                                                                                                                   \n");
+            System.out.println("Spieler: " + winner + " " + allPlayers[winner - 1].getName() + " hat gewonnen!");
             throw new ConcurrentModificationException();
         }
 
@@ -169,6 +206,16 @@ public class Game
         return -1; // Wenn niemand gewonnen hat
     }
 
+    /**
+     * Diese Methode bewegt eine {@link Figure Figur} zu dem gewünschten {@link int index} vom {@link int[] Path}.<br>
+     * Es erfolgt eine Prüfung, ob die {@link Figure Figur} sich überhaupt an die gewünschte Stelle bewegen kann
+     * und wenn die Stelle im Ziel angekommen ist, wird der {@link Boolean boolean} für diese {@link Figure Figur} geändert.
+     * @param fieldArray {@link Field Array} mit allen {@link Field Feldern}.
+     * @param figure Die {@link Figure Figur} die bewegt werden soll.
+     * @param index Die {@link int Stelle} an die sich bewegt werden soll.
+     * @param path {@link int[] Path}
+     * @author EGA
+     */
     private static void moveFigureToThisIndex(Field[] fieldArray, Figure figure, int index, int[] path)
     {
         if (index > 47)
@@ -186,6 +233,12 @@ public class Game
         }
     }
 
+    /**
+     * Diese Methode bewegt eine {@link Figure Figur} zurück in ihr Haus.
+     * @param fieldArray {@link Field Array} mit allen {@link Field Feldern}.
+     * @param figure Die {@link Figure Figur} die zurückbewegt werden soll.
+     * @author EGA
+     */
     private static void moveFigureBackInHouse(Field[] fieldArray, Figure figure)
     {
         int currentPosition = figure.getPosition();
@@ -195,7 +248,16 @@ public class Game
         figure.setInsideHome(true);
     }
 
-    private static Figure checkForFigure(Field[] fieldArray, int diceNumber, Figure figure, Player player)
+    /**
+     * Diese Methode prüft, welche {@link Figure Figur} an der nächsten Stelle ist.
+     * @param fieldArray {@link Field Array} mit allen {@link Field Feldern}.
+     * @param diceNumber {@link int Zahl} die gewürfelt wurde.
+     * @param figure Die {@link Figure Figur} die bewegt/geprüft werden soll.
+     * @param player Der {@link Player Spieler} dem die {@link Figure Figur} gehört.
+     * @return Die {@link Figure Figur} an der nächsten Stellen oder {@link null}
+     * @author EGA
+     */
+    private static Figure checkForNextFigure(Field[] fieldArray, int diceNumber, Figure figure, Player player)
     {
         int[] path = player.getPath();
         int indexLocation = getIndexFromPath(path, figure.getPosition());
@@ -215,6 +277,17 @@ public class Game
         }
     }
 
+    /**
+     * Diese Methode liefert dir den Index von der derzeitigen Position im Path Array.
+     * BSP.
+     * path -> 5,6,7,8,23,24,25,26,27
+     * position -> 8
+     * Index -> 3
+     * @param path {@link int Zahlen array} in dem der Weg gespeichert ist.
+     * @param currentPathLocation {@link int Zahl} der derzeitigen Postion im path.
+     * @return Index vom {@link int[] path}.
+     * @author EGA
+     */
     private static int getIndexFromPath(int[] path, int currentPathLocation)
     {
         int index = -1;
@@ -229,7 +302,17 @@ public class Game
         return index;
     }
 
-    private static void setPositions(Field[] fields, Figure[] figures, int i, int i1, int i2, int i3)
+    /**
+     * Diese Methode legt die Anfangspositionen fest, an denen die {@link Figure Figuren} starten und wo deren Haus ist.
+     * @param fieldArray {@link Field Array} mit allen Feldern, um die Positionen richtig auf diese zu setzen.
+     * @param figures {@link Figure Array} mit allen {@link Figure Figuren}
+     * @param i Position von der ersten {@link Figure Figur}
+     * @param i1 Position von der zweiten {@link Figure Figur}
+     * @param i2 Position von der dritten {@link Figure Figur}
+     * @param i3 Position von der vierten {@link Figure Figur}
+     * @author EGA
+     */
+    private static void setPositions(Field[] fieldArray, Figure[] figures, int i, int i1, int i2, int i3)
     {
         figures[0].setPosition(i);
         figures[0].setMyHousePosition(i);
@@ -240,12 +323,20 @@ public class Game
         figures[3].setPosition(i3);
         figures[3].setMyHousePosition(i3);
 
-        fields[i].setFigure(figures[0]);
-        fields[i1].setFigure(figures[1]);
-        fields[i2].setFigure(figures[2]);
-        fields[i3].setFigure(figures[3]);
+        fieldArray[i].setFigure(figures[0]);
+        fieldArray[i1].setFigure(figures[1]);
+        fieldArray[i2].setFigure(figures[2]);
+        fieldArray[i3].setFigure(figures[3]);
     }
 
+    /**
+     * Erstellt ein Array mit 4 {@link Figure Figuren}.
+     * @param playerNumber Die {@link int Zahl} zu welchem {@link Player Spieler} die {@link Figure Figuren} gehören.
+     * @param operator Das Zeichen als Symbol für die Figuren.
+     * @param color Die Farbe der {@link Figure Figuren}.
+     * @return Ein Array mit 4 {@link Figure Figuren}
+     * @author EGA
+     */
     private static Figure[] createFigureArray(int playerNumber, String operator, String color)
     {
         String reset = "\033[0m";
@@ -257,5 +348,21 @@ public class Game
         return figures;
     }
 
-    // Walking on sunshine = iCarly intro
+    /**
+     * Diese Methode prüft, ob alle Figuren im Haus sind.
+     * @param player vom wem sollen die Figuren überprüft werden..
+     * @return {@link boolean true} wenn alle Figuren im Haus sind.
+     * @author EGA
+     */
+    private static boolean isEveryFigureInsideHouse(Player player){
+        int counter = 0;
+        for (int i = 0; i < 4; i++)
+        {
+            if (player.getFigureArray()[i].isInsideHome())
+            {
+                counter++;
+            }
+        }
+        return counter == 4; // Wenn alle im House = true, ansonsten false
+    }
 }
