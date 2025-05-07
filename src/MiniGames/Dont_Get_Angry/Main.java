@@ -9,7 +9,7 @@ public class Main
     {
         try
         {
-            Game.start();
+            Game.launch();
         } catch (ConcurrentModificationException e)
         {
             System.out.println("Spiel wird beendet!");

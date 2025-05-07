@@ -6,14 +6,24 @@ import MiniGames.Dont_Get_Angry.Console.Input;
 import MiniGames.Dont_Get_Angry.Console.Output;
 import MiniGames.Dont_Get_Angry.Factory.FieldFactory;
 import MiniGames.Dont_Get_Angry.Player;
-
 import java.util.ConcurrentModificationException;
 
+/**
+ * Diese Klasse representiert das Spiel, in dieser Wird das Spiel aufgebaut und durchgeführt.
+ *
+ * @author EGA
+ */
 public class Game
 {
-    public static void start()
+    /**
+     * Diese Methode erstellt alle notwendigen Objekte und startet das Spiel.<br>
+     * Die einzelnen Runden werden in einer anderen Methode behandelt.
+     *
+     * @author EGA
+     */
+    public static void launch()
     {
-//        Initialize Board
+//        Create all Fields
         Field[] fieldArray = FieldFactory.createAllFields();
 //        Create all Figures
         Figure[] figuresPOne = createFigureArray(1, "▲", "\033[31m");
@@ -37,7 +47,7 @@ public class Game
 //        Asking for Player Number
         int playerAmount = Input.getInt("Wie viele Spieler sind da: ");
 //        Create first two players
-        Player playerOne = new Player(Input.getString("\033[31m"+"Spieler eins geben Sie Ihren Namen ein: "), figuresPOne, 1, p1Path);
+        Player playerOne = new Player(Input.getString("\033[31m" + "Spieler eins geben Sie Ihren Namen ein: "), figuresPOne, 1, p1Path);
         Player playerTwo = new Player("", figuresPTwo, 2, p2Path);
 //        Create optional players
         Player playerThree = new Player("", figuresPThree, 3, p3Path);
@@ -49,43 +59,52 @@ public class Game
         playerFour.setSpawnField(36);
         if (playerAmount >= 2)
         {
-            playerTwo.setName(Input.getString("\033[36m"+"Spieler zwei geben Sie Ihren Namen ein: "));
+            playerTwo.setName(Input.getString("\033[36m" + "Spieler zwei geben Sie Ihren Namen ein: "));
 
         }
         if (playerAmount >= 3)
         {
-            playerThree.setName(Input.getString("\033[32m"+"Spieler drei geben Sie Ihren Namen ein: "));
+            playerThree.setName(Input.getString("\033[32m" + "Spieler drei geben Sie Ihren Namen ein: "));
         }
         if (playerAmount == 4)
         {
-            playerFour.setName(Input.getString("\033[33m"+"Spieler vier geben Sie Ihren Namen ein: "+"\033[0m"));
+            playerFour.setName(Input.getString("\033[33m" + "Spieler vier geben Sie Ihren Namen ein: " + "\033[0m"));
         }
         Output.map(fieldArray);
         while (true)
         {
-//        Spiele ein Runde
-            newMovementTech(fieldArray, playerOne, allPlayers);
+//        Play one round
+            playOneMove(fieldArray, playerOne, allPlayers);
             Output.map(fieldArray);
             if (playerAmount >= 2)
             {
-                newMovementTech(fieldArray, playerTwo, allPlayers);
+                playOneMove(fieldArray, playerTwo, allPlayers);
                 Output.map(fieldArray);
             }
             if (playerAmount >= 3)
             {
-                newMovementTech(fieldArray, playerThree, allPlayers);
+                playOneMove(fieldArray, playerThree, allPlayers);
                 Output.map(fieldArray);
             }
             if (playerAmount == 4)
             {
-                newMovementTech(fieldArray, playerFour, allPlayers);
+                playOneMove(fieldArray, playerFour, allPlayers);
                 Output.map(fieldArray);
             }
 
         }
     }
 
-    private static void newMovementTech(Field[] fieldArray, Player player, Player[] allPlayers)
+    /**
+     * Diese Methode durchläuft einen Spielzug, sie lässt den Benutzer würfeln und eine Figur auswählen, um diese zu bewegen.
+     *
+     * @param fieldArray {@link Field Array} mit allen {@link Field Feldern}.
+     * @param player     Der {@link Player Spieler} der den Zug {@link Figure Figur} tätigt.
+     * @param allPlayers Ein {@link Player[] Spieler[]} Array mit allen {@link Player Spieler}.
+     *
+     * @author EGA
+     */
+    private static void playOneMove(Field[] fieldArray, Player player, Player[] allPlayers)
     {
 //        Die Zahl würfeln
         System.out.println(player.getName() + " Würfeln sie mit enter: ");
@@ -96,7 +115,8 @@ public class Game
             System.out.println(player.getName() + " Würfeln sie mit enter: ");
             diceNumber = Dice.roll();
             System.out.println(player.getName() + " hat: " + diceNumber + " gewürfelt!");
-            if (diceNumber != 6){
+            if (diceNumber != 6)
+            {
                 System.out.println(player.getName() + " Würfeln sie mit enter: ");
                 diceNumber = Dice.roll();
                 System.out.println(player.getName() + " hat: " + diceNumber + " gewürfelt!");
@@ -180,11 +200,17 @@ public class Game
             System.out.println("Spieler: " + winner + " " + allPlayers[winner - 1].getName() + " hat gewonnen!");
             throw new ConcurrentModificationException();
         }
-
-//        Arbeite mit dem Array als Path index addieren zum moven und dann prüfen, ob diese Zahl besetzt ist und von wem,
-//        um den später zurückzuschicken
     }
 
+    /**
+     * Diese Methode prüft, ob ein {@link Player Spieler} gewonnen hat.
+     *
+     * @param allPlayers Ein {@link Player[] Spieler[]} Array mit allen {@link Player Spieler}.
+     *
+     * @return Die {@link int Nummer} vom {@link Player Spieler} der gewonnen hat, falls keiner gewonnen hat -1.
+     *
+     * @author EGA
+     */
     private static int didSomeoneWin(Player[] allPlayers)
     {
 
@@ -210,10 +236,12 @@ public class Game
      * Diese Methode bewegt eine {@link Figure Figur} zu dem gewünschten {@link int index} vom {@link int[] Path}.<br>
      * Es erfolgt eine Prüfung, ob die {@link Figure Figur} sich überhaupt an die gewünschte Stelle bewegen kann
      * und wenn die Stelle im Ziel angekommen ist, wird der {@link Boolean boolean} für diese {@link Figure Figur} geändert.
+     *
      * @param fieldArray {@link Field Array} mit allen {@link Field Feldern}.
-     * @param figure Die {@link Figure Figur} die bewegt werden soll.
-     * @param index Die {@link int Stelle} an die sich bewegt werden soll.
-     * @param path {@link int[] Path}
+     * @param figure     Die {@link Figure Figur} die bewegt werden soll.
+     * @param index      Die {@link int Stelle} an die sich bewegt werden soll.
+     * @param path       {@link int[] Path}
+     *
      * @author EGA
      */
     private static void moveFigureToThisIndex(Field[] fieldArray, Figure figure, int index, int[] path)
@@ -235,8 +263,10 @@ public class Game
 
     /**
      * Diese Methode bewegt eine {@link Figure Figur} zurück in ihr Haus.
+     *
      * @param fieldArray {@link Field Array} mit allen {@link Field Feldern}.
-     * @param figure Die {@link Figure Figur} die zurückbewegt werden soll.
+     * @param figure     Die {@link Figure Figur} die zurückbewegt werden soll.
+     *
      * @author EGA
      */
     private static void moveFigureBackInHouse(Field[] fieldArray, Figure figure)
@@ -250,11 +280,14 @@ public class Game
 
     /**
      * Diese Methode prüft, welche {@link Figure Figur} an der nächsten Stelle ist.
+     *
      * @param fieldArray {@link Field Array} mit allen {@link Field Feldern}.
      * @param diceNumber {@link int Zahl} die gewürfelt wurde.
-     * @param figure Die {@link Figure Figur} die bewegt/geprüft werden soll.
-     * @param player Der {@link Player Spieler} dem die {@link Figure Figur} gehört.
+     * @param figure     Die {@link Figure Figur} die bewegt/geprüft werden soll.
+     * @param player     Der {@link Player Spieler} dem die {@link Figure Figur} gehört.
+     *
      * @return Die {@link Figure Figur} an der nächsten Stellen oder {@link null}
+     *
      * @author EGA
      */
     private static Figure checkForNextFigure(Field[] fieldArray, int diceNumber, Figure figure, Player player)
@@ -283,9 +316,12 @@ public class Game
      * path -> 5,6,7,8,23,24,25,26,27
      * position -> 8
      * Index -> 3
-     * @param path {@link int Zahlen array} in dem der Weg gespeichert ist.
+     *
+     * @param path                {@link int Zahlen array} in dem der Weg gespeichert ist.
      * @param currentPathLocation {@link int Zahl} der derzeitigen Postion im path.
+     *
      * @return Index vom {@link int[] path}.
+     *
      * @author EGA
      */
     private static int getIndexFromPath(int[] path, int currentPathLocation)
@@ -304,12 +340,14 @@ public class Game
 
     /**
      * Diese Methode legt die Anfangspositionen fest, an denen die {@link Figure Figuren} starten und wo deren Haus ist.
+     *
      * @param fieldArray {@link Field Array} mit allen Feldern, um die Positionen richtig auf diese zu setzen.
-     * @param figures {@link Figure Array} mit allen {@link Figure Figuren}
-     * @param i Position von der ersten {@link Figure Figur}
-     * @param i1 Position von der zweiten {@link Figure Figur}
-     * @param i2 Position von der dritten {@link Figure Figur}
-     * @param i3 Position von der vierten {@link Figure Figur}
+     * @param figures    {@link Figure Array} mit allen {@link Figure Figuren}
+     * @param i          Position von der ersten {@link Figure Figur}
+     * @param i1         Position von der zweiten {@link Figure Figur}
+     * @param i2         Position von der dritten {@link Figure Figur}
+     * @param i3         Position von der vierten {@link Figure Figur}
+     *
      * @author EGA
      */
     private static void setPositions(Field[] fieldArray, Figure[] figures, int i, int i1, int i2, int i3)
@@ -331,10 +369,13 @@ public class Game
 
     /**
      * Erstellt ein Array mit 4 {@link Figure Figuren}.
+     *
      * @param playerNumber Die {@link int Zahl} zu welchem {@link Player Spieler} die {@link Figure Figuren} gehören.
-     * @param operator Das Zeichen als Symbol für die Figuren.
-     * @param color Die Farbe der {@link Figure Figuren}.
+     * @param operator     Das Zeichen als Symbol für die Figuren.
+     * @param color        Die Farbe der {@link Figure Figuren}.
+     *
      * @return Ein Array mit 4 {@link Figure Figuren}
+     *
      * @author EGA
      */
     private static Figure[] createFigureArray(int playerNumber, String operator, String color)
@@ -350,11 +391,15 @@ public class Game
 
     /**
      * Diese Methode prüft, ob alle Figuren im Haus sind.
+     *
      * @param player vom wem sollen die Figuren überprüft werden..
+     *
      * @return {@link boolean true} wenn alle Figuren im Haus sind.
+     *
      * @author EGA
      */
-    private static boolean isEveryFigureInsideHouse(Player player){
+    private static boolean isEveryFigureInsideHouse(Player player)
+    {
         int counter = 0;
         for (int i = 0; i < 4; i++)
         {
