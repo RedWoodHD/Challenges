@@ -47,7 +47,7 @@ public class Game
 //        Asking for Player Number
         int playerAmount = Input.getInt("Wie viele Spieler sind da: ");
 //        Create first two players
-        Player playerOne = new Player(Input.getString("\033[31m" + "Spieler eins geben Sie Ihren Namen ein: "), figuresPOne, 1, p1Path);
+        Player playerOne = new Player(Input.getString("\033[31m" + "Spieler eins geben Sie Ihren Namen ein: "+ "\033[0m"), figuresPOne, 1, p1Path);
         Player playerTwo = new Player("", figuresPTwo, 2, p2Path);
 //        Create optional players
         Player playerThree = new Player("", figuresPThree, 3, p3Path);
@@ -59,12 +59,12 @@ public class Game
         playerFour.setSpawnField(36);
         if (playerAmount >= 2)
         {
-            playerTwo.setName(Input.getString("\033[36m" + "Spieler zwei geben Sie Ihren Namen ein: "));
+            playerTwo.setName(Input.getString("\033[36m" + "Spieler zwei geben Sie Ihren Namen ein: "+ "\033[0m"));
 
         }
         if (playerAmount >= 3)
         {
-            playerThree.setName(Input.getString("\033[32m" + "Spieler drei geben Sie Ihren Namen ein: "));
+            playerThree.setName(Input.getString("\033[32m" + "Spieler drei geben Sie Ihren Namen ein: "+ "\033[0m"));
         }
         if (playerAmount == 4)
         {

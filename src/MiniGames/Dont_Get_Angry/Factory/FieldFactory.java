@@ -2,8 +2,17 @@ package MiniGames.Dont_Get_Angry.Factory;
 
 import MiniGames.Dont_Get_Angry.Board.Field;
 
+/**
+ * Diese Klasse ist dafür da eine Methode zu bieten die alle {@link Field Spielfelder} erstellt.
+ * @author EGA
+ */
 public class FieldFactory
 {
+    /**
+     * Diese Methode erstellt alle nötigen {@link Field Spielfelder} (0-71).
+     * @return Ein {@link Field Spielfelder[]} array.
+     * @author EGA
+     */
     public static Field[] createAllFields()
     {
         Field[] allFields = new Field[72];
@@ -28,12 +37,6 @@ public class FieldFactory
         allFields[69] = new Field(); // SpawnYellow 70
         allFields[70] = new Field(); // SpawnYellow 71
 
-        // Protected Felder
-        allFields[19] = new Field();     // ProtectedRed 20
-        allFields[3] = new Field();    // ProtectedBlue 4
-        allFields[50] = new Field(); // ProtectedYellow 51
-        allFields[66] = new Field();  // ProtectedGreen 67
-
         // Finish Felder
         allFields[31] = new Field();    // FinishRed 32
         allFields[32] = new Field();    // FinishRed 33
@@ -55,7 +58,7 @@ public class FieldFactory
         allFields[55] = new Field();  // FinishGreen 56
         allFields[60] = new Field();  // FinishGreen 61
 
-        // Der Rest sind Regular Felder
+        // Der Rest sind normale Felder
         for (int i = 0; i < 72; i++) {
             if (allFields[i] == null) {  // Wenn das Feld noch nicht zugewiesen wurde
                 allFields[i] = new Field();

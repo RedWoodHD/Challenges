@@ -2,8 +2,17 @@ package MiniGames.Dont_Get_Angry.Console;
 
 import MiniGames.Dont_Get_Angry.Board.Field;
 
+/**
+ * Diese Klasse ist dafür da, eine Methode zu liefern um das "Spielbrett" auf der Konsole ausgeben zu können.
+ * @author EGA
+ */
 public class Output
 {
+    /**
+     * Diese Methode gibt einmal das gesamte "Spielbrett" im aktuellen Status auf der Konsole aus.
+     * @param fieldArray Alle {@link Field Spielfelder} die ausgegeben werden sollen, als Array.
+     * @author EGA
+     */
     public static void map(Field[] fieldArray)
     {
         String[] test = new String[72];
