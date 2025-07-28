@@ -1,16 +1,15 @@
-package MiniGames.Dont_Get_Angry.Logic;
+package MiniGames.Human_Dont_Rage.Logic;
 
-import MiniGames.Dont_Get_Angry.Board.Field;
-import MiniGames.Dont_Get_Angry.Board.Figure;
-import MiniGames.Dont_Get_Angry.Console.Input;
-import MiniGames.Dont_Get_Angry.Console.Output;
-import MiniGames.Dont_Get_Angry.Factory.FieldFactory;
-import MiniGames.Dont_Get_Angry.Player;
+import MiniGames.Human_Dont_Rage.Board.Field;
+import MiniGames.Human_Dont_Rage.Board.Figure;
+import MiniGames.Human_Dont_Rage.Console.Input;
+import MiniGames.Human_Dont_Rage.Console.Output;
+import MiniGames.Human_Dont_Rage.Factory.FieldFactory;
+import MiniGames.Human_Dont_Rage.Player;
 import java.util.ConcurrentModificationException;
 
 /**
  * Diese Klasse representiert das Spiel, in dieser Wird das Spiel aufgebaut und durchgeführt.
- *
  * @author EGA
  */
 public class Game

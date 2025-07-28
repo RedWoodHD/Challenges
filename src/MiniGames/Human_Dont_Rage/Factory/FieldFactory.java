@@ -1,6 +1,6 @@
-package MiniGames.Dont_Get_Angry.Factory;
+package MiniGames.Human_Dont_Rage.Factory;
 
-import MiniGames.Dont_Get_Angry.Board.Field;
+import MiniGames.Human_Dont_Rage.Board.Field;
 
 /**
  * Diese Klasse ist dafür da eine Methode zu bieten die alle {@link Field Spielfelder} erstellt.

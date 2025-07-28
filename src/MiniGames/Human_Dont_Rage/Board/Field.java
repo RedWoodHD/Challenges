@@ -1,5 +1,9 @@
-package MiniGames.Dont_Get_Angry.Board;
+package MiniGames.Human_Dont_Rage.Board;
 
+/**
+ * Diese Klasse representiert ein Spielfeld auf dem sich eine {@link Figure} befinden kann.
+ * @author EGA
+ */
 public class Field
 {
     Figure figure;

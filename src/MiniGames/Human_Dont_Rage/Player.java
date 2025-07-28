@@ -1,7 +1,11 @@
-package MiniGames.Dont_Get_Angry;
+package MiniGames.Human_Dont_Rage;
 
-import MiniGames.Dont_Get_Angry.Board.Figure;
+import MiniGames.Human_Dont_Rage.Board.Figure;
 
+/**
+ * Diese Klasse representiert einen Spieler.
+ * @author EGA
+ */
 public class Player
 {
     String name;

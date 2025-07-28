@@ -1,6 +1,6 @@
-package MiniGames.Dont_Get_Angry.Logic;
+package MiniGames.Human_Dont_Rage.Logic;
 
-import MiniGames.Dont_Get_Angry.Console.Input;
+import MiniGames.Human_Dont_Rage.Console.Input;
 
 import java.util.Random;
 

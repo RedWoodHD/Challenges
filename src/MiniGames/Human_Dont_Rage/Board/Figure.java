@@ -1,5 +1,10 @@
-package MiniGames.Dont_Get_Angry.Board;
+package MiniGames.Human_Dont_Rage.Board;
 
+/**
+ * Diese Klasse representiert eine Figur die sich über das Spielfeld bewegt.
+ * Diese wird vom {@link MiniGames.Human_Dont_Rage.Player Spieler} gesteuert.
+ * @author EGA
+ */
 public class Figure
 {
     String operator;

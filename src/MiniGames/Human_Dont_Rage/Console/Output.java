@@ -1,6 +1,6 @@
-package MiniGames.Dont_Get_Angry.Console;
+package MiniGames.Human_Dont_Rage.Console;
 
-import MiniGames.Dont_Get_Angry.Board.Field;
+import MiniGames.Human_Dont_Rage.Board.Field;
 
 /**
  * Diese Klasse ist dafür da, eine Methode zu liefern um das "Spielbrett" auf der Konsole ausgeben zu können.
@@ -50,7 +50,7 @@ public class Output
                      ║ \033[31m│ %s\033[31m ││ %s\033[31m │\033[0m               │ %s │ \033[36m║ %s\033[36m ║\033[0m │ %s │                \033[36m│ %s\033[36m ││ %s\033[36m │\033[0m ║
                      ║ \033[31m└────┘└────┘\033[0m               └────┘ \033[36m╚════╝\033[0m └────┘                \033[36m└────┘└────┘\033[0m ║
                      ║                            ┌────┐ \033[36m╔════╗\033[0m ┌────┐                             ║
-                     ║           Mensch           │ %s │ \033[36m║ %s\033[36m ║\033[0m │ %s │     Ärger                   ║
+                     ║           Mensch           │ %s │ \033[36m║ %s\033[36m ║\033[0m │ %s │     Ärgere                  ║
                      ║                            └────┘ \033[36m╚════╝\033[0m └────┘                             ║
                      ║                            ┌────┐ \033[36m╔════╗\033[0m ┌────┐                             ║
                      ║                            │ %s │ \033[36m║ %s\033[36m ║\033[0m │ %s │                             ║

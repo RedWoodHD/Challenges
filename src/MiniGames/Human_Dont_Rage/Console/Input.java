@@ -1,4 +1,4 @@
-package MiniGames.Dont_Get_Angry.Console;
+package MiniGames.Human_Dont_Rage.Console;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
