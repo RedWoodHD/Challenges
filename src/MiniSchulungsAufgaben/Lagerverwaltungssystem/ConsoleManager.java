@@ -1,11 +1,11 @@
 package MiniSchulungsAufgaben.Lagerverwaltungssystem;
 
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-import static MiniSchulungsAufgaben.Lagerverwaltungssystem.Main.red;
-import static MiniSchulungsAufgaben.Lagerverwaltungssystem.Main.reset;
+import static MiniSchulungsAufgaben.Lagerverwaltungssystem.Main.*;
 
 public class ConsoleManager
 {
@@ -15,7 +15,22 @@ public class ConsoleManager
         {
             Scanner scanner = new Scanner(System.in);
             System.out.println(output);
-            return scanner.nextLine();
+            String userInput = scanner.nextLine();
+            if (userInput.matches("^[a-zA-Z0-9 \\-]{1,22}$"))
+            {
+                return userInput;
+
+            }
+            else
+            {
+                System.out.println("--------------------------------------");
+                System.out.println(cyan+"Folgende Regeln für den Namen: "+reset);
+                System.out.println(red+"Buchstaben und Zahlen.");
+                System.out.println("Sonderzeichen: Leerzeichen und Minus.");
+                System.out.println("Länge: 1-22."+reset);
+                System.out.println("-------------------------------------");
+                return readString(output);
+            }
         } catch (NoSuchElementException e)
         {
             System.out.println(red + "Mach das nicht! Beende Programm!" + reset);
@@ -31,7 +46,11 @@ public class ConsoleManager
             Scanner scanner = new Scanner(System.in);
             System.out.println(output);
             return scanner.nextInt();
-        } catch (NoSuchElementException e)
+        } catch (InputMismatchException e){
+            System.out.println(red+"❗Nur Zahlen verwenden❗"+reset);
+            return readInt(output);
+        }
+        catch (NoSuchElementException e)
         {
             System.out.println(red + "Mach das nicht! Beende Programm!" + reset);
             System.exit(0); // ❗Programm wird sofort beendet!
